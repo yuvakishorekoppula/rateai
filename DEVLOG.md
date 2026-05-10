@@ -20,6 +20,7 @@ Build the pricing data layer and start implementing the audit engine logic.
 
 
 ## Day 2 — 2026-05-07
+
 **Hours worked:** 4
 
 **What I did:**  
@@ -56,7 +57,49 @@ The project is complete and production-ready. It meets all assignment requiremen
 
 ## Day 4 — 2026-05-09 
 **Hours worked:** 0
-**What I did:** I was travelling to my hometown
 
+**What I did:**
+ I was travelling to my hometown
+
+## Day 5 — 2026-05-10
+
+**Hours worked:** 5
+
+**What I did:**
+
+* Fixed multiple project structure and dependency issues in the Next.js app
+* Cleaned duplicate Node.js workspace setup and removed conflicting lockfiles
+* Configured and tested local development environment successfully
+* Installed and resolved missing dependencies including React Hook Form, Zod, and Resolvers
+* Debugged API route issues related to Resend email integration
+* Added and configured environment variables for Resend and Supabase
+* Connected Vercel deployment settings with production environment variables
+* Fixed deployment/build errors related to Supabase configuration and API routes
+* Improved navigation structure planning for Pricing, Methodology, Privacy, Terms, and GitHub routes
+* Prepared the application for live deployment on Vercel
+
+**What I learned:**
+
+* Environment variables behave differently locally vs production deployments
+* Vercel requires manual configuration of server-side secrets and API keys
+* Small dependency mismatches can break full application builds in Next.js
+* Proper project structure and workspace cleanup are critical for smooth deployments
+* API route debugging in Next.js App Router requires careful handling of server-only code
+
+**Blockers / what I'm stuck on:**
+
+* Final deployment validation and ensuring all API integrations work correctly in production
+* Need to verify email delivery and Supabase integration after deployment
+
+**Plan for tomorrow:**
+
+* Complete successful Vercel production deployment
+* Test all routes and API endpoints in production
+* Add final UI polish and responsiveness improvements
+* Prepare final README/documentation for submission
+* Conduct end-to-end testing for the full audit workflow
+
+**Overall assessment:**
+The project is now close to production deployment. Core architecture, integrations, and UI are working well, and the remaining work is focused on deployment stability, final testing, and production readiness.
 
 
