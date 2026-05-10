@@ -1,4 +1,4 @@
-# ECONOMICS.md
+
 
 # Unit Economics & Revenue Model
 

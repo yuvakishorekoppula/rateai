@@ -1,4 +1,4 @@
-# GTM.md
+
 
 # Go-To-Market Strategy
 
