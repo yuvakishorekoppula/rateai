@@ -5,6 +5,7 @@ import AuditInputForm from "@/components/forms/AuditInputForm";
 import Results from "@/components/Results";
 import { generateAuditReport, AuditResult } from "@/lib/auditEngine";
 import { savePublicAudit } from "@/lib/publicAudit";
+import Link from "next/link";
 
 /**
  * --- RATEAI MAIN ORCHESTRATOR ---
@@ -70,11 +71,11 @@ export default function Home() {
             <span className="text-xl font-black tracking-tighter uppercase">RateAI</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-xs font-black uppercase tracking-widest text-zinc-500">
-            <a href="#" className="hover:text-blue-600 transition-colors">Pricing Data</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Methodology</a>
-            <button className="px-5 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full hover:scale-105 transition-all active:scale-95">
+            <Link href="/pricing-data" className="hover:text-blue-600 transition-colors">Pricing Data</Link>
+            <Link href="/methodology" className="hover:text-blue-600 transition-colors">Methodology</Link>
+            <Link href="/contact" className="px-5 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full hover:scale-105 transition-all active:scale-95 inline-block text-center">
               Talk to Expert
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -166,9 +167,9 @@ export default function Home() {
             &copy; 2026 RateAI | A Credex Initiative
           </p>
           <div className="flex gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
-            <a href="#" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-zinc-900 dark:hover:text-white transition-colors">GitHub</a>
+            <Link href="/privacy" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Terms</Link>
+            <a href="https://github.com/yuvakishorekoppula/rateai" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-900 dark:hover:text-white transition-colors">GitHub</a>
           </div>
         </div>
       </footer>

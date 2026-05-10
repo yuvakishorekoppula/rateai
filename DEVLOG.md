@@ -50,3 +50,13 @@ No blockers. Everything is working as expected. The code is clean, modular, and 
 **Overall assessment:**  
 The project is complete and production-ready. It meets all assignment requirements and exceeds expectations in terms of polish, features, and architecture.
 
+## Day 3 — 2026-05-08 
+**Hours worked:** 0
+**What I did:** I was having my Sem examination 
+
+## Day 4 — 2026-05-09 
+**Hours worked:** 0
+**What I did:** I was travelling to my hometown
+
+
+

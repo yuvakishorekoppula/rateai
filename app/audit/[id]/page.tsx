@@ -285,9 +285,9 @@ export default async function PublicAuditPage({ params }: PageProps) {
             &copy; {new Date().getFullYear()} RateAI | A Credex Initiative
           </p>
           <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-zinc-400">
-            <a href="#" className="hover:text-blue-600 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Terms</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Enterprise</a>
+            <Link href="/privacy" className="hover:text-blue-600 transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-blue-600 transition-colors">Terms</Link>
+            <a href="https://github.com/yuvakishorekoppula/rateai" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors">GitHub</a>
           </div>
         </div>
       </footer>
