@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RateAI
 
-## Getting Started
+# RateAI is an AI-powered pricing intelligence platform designed for startups, SaaS businesses, and ecommerce founders. The platform helps users analyze competitor pricing, generate AI-driven pricing insights, and capture qualified leads through an interactive dashboard and automated workflows. It was built to simplify pricing strategy decisions using real-time analytics and AI assistance.
 
-First, run the development server:
+## Screenshots / Demo
+
+### Landing Page
+![alt text](image.png)
+
+### AI Analysis Results
+![alt text](image-1.png)
+
+
+### AI Analysis Reprt via email 
+![alt text](image-2.png)
+
+## Live Deployment
+https://rateai-yuvakishorekoppulas-projects.vercel.app?_vercel_share=cnCRq5PaO3liToXQkCgWYE4Wipcz5p6R
+
+## Quick Start
+
+### Clone Repository
+
+```bash
+git clone https://github.com/yuvakishorekoppula/rateai.git
+cd rateai
+```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Configure Environment Variables
+
+Create a `.env.local` file:
+
+```env
+OPENAI_API_KEY=your_key
+ANTHROPIC_API_KEY=your_key
+
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_key
+
+RESEND_API_KEY=your_resend_key
+```
+
+### Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Production Build
 
-## Learn More
+```bash
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Deploy to Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+vercel
+```
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Next.js 15
+- TypeScript
+- TailwindCSS
+- Supabase
+- OpenAI API
+- Anthropic API
+- Resend
+- Vercel
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Key Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- AI-powered pricing recommendations
+- Competitor pricing analysis
+- Lead capture and email workflows
+- Responsive modern UI
+- Real-time analytics dashboard
+- Cloud deployment with Vercel
+
+---
+
+## Decisions & Trade-Offs
+
+### 1. Next.js App Router instead of Pages Router
+Used the App Router for better scalability and server-side rendering support, even though it added extra development complexity.
+
+### 2. Supabase instead of Firebase
+Selected Supabase because PostgreSQL provided stronger relational database support for analytics workflows.
+
+### 3. Vercel for Deployment
+Chose Vercel for seamless Next.js integration and automatic deployments, sacrificing some low-level infrastructure customization.
+
+### 4. AI-First Architecture
+Integrated OpenAI and Anthropic APIs early to prioritize intelligent pricing insights, despite higher API dependency costs.
+
+### 5. Fast MVP Development
+Focused on shipping a functional MVP quickly rather than implementing enterprise-level authentication and microservices initially.
+
+---
+
+## Future Improvements
+
+- User authentication and profiles
+- Saved pricing reports
+- Automated competitor monitoring
+- Stripe billing integration
+- Advanced analytics and charts
+
+---
+
+## Author
+
+Developed by Koppula Yuva Kishore.
