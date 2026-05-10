@@ -1,0 +1,52 @@
+name: CI
+
+# --- WORKFLOW TRIGGERS ---
+# Automatically executes this pipeline whenever code is pushed directly to the `main` branch
+# or when a pull request is opened/updated against the `main` branch. This acts as a gatekeeper
+# ensuring no broken code reaches production.
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # --- CI FLOW ---
+    # The sequential steps to fully validate the integrity of the codebase.
+    # We check out the code, set up the optimal Node environment (caching NPM to drastically reduce run times),
+    # and deterministically install dependencies using `npm ci`.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
+
+      # Strictly enforce TypeScript definitions. Fails the build if there are any TS errors.
+      - name: Type Check
+        run: npx tsc --noEmit
+
+      - name: Run Vitest Tests
+        run: npx vitest run
+
+      # --- BUILD VALIDATION ---
+      # Compiles the Next.js app to ensure the static generation and build phase succeeds.
+      # If any Next.js specific compile errors exist, this will exit with code 1 and fail the PR.
+      - name: Build Next.js Application
+        run: npm run build
+        env:
+          # Supabase requires these variables at build time if they are referenced globally
+          NEXT_PUBLIC_SUPABASE_URL: "https://mock.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock-anon-key"

@@ -41,7 +41,11 @@ const USAGE_LEVEL_OPTIONS = [
 /**
  * --- COMPONENT ---
  */
-export default function AuditInputForm() {
+interface AuditInputFormProps {
+  onSubmit?: (data: AuditFormValues) => void | Promise<void>;
+}
+
+export default function AuditInputForm({ onSubmit: externalOnSubmit }: AuditInputFormProps = {}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRestored, setIsRestored] = useState(false);
 
@@ -127,12 +131,16 @@ export default function AuditInputForm() {
   const onSubmit = async (data: AuditFormValues) => {
     setIsSubmitting(true);
     try {
-      console.log("--- GENERATED AUDIT PAYLOAD ---");
-      console.log(JSON.stringify(data, null, 2));
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert("Audit payload generated successfully! Check console for results.");
+      if (externalOnSubmit) {
+        await externalOnSubmit(data);
+      } else {
+        console.log("--- GENERATED AUDIT PAYLOAD ---");
+        console.log(JSON.stringify(data, null, 2));
+        
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        alert("Audit payload generated successfully! Check console for results.");
+      }
     } catch (error) {
       console.error("Submission failed:", error);
     } finally {

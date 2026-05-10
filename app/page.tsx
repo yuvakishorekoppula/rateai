@@ -27,7 +27,20 @@ export default function Home() {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     try {
-      const results = generateAuditReport(data);
+      const results: AuditResult[] = [];
+      for (const tool of data.tools) {
+         const res = generateAuditReport({
+           selectedTool: tool.toolName,
+           selectedPlan: tool.selectedPlan,
+           budget: data.budget,
+           teamSize: tool.seats,
+           requiredFeatures: data.requiredFeatures,
+           usageLevel: tool.usageLevel,
+         });
+         if (typeof res !== 'string') {
+           results.push(res);
+         }
+      }
       setAuditResults(results);
 
       // Persist to Supabase and generate a shareable public URL

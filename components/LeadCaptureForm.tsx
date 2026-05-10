@@ -35,7 +35,7 @@ interface LeadCaptureFormProps {
  * A premium, SaaS-grade conversion component with integrated 
  * loading states, success transitions, and spam protection.
  */
-export default function LeadCaptureForm({ onSuccess, auditContext }: LeadCaptureFormProps) {
+export default function LeadCaptureForm({ savings, onSuccess, auditContext }: LeadCaptureFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);

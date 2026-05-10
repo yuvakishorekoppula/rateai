@@ -9,6 +9,10 @@ interface ResultsProps {
   results: AuditResult[];
   /** Whether the audit is currently being calculated */
   isLoading?: boolean;
+  /** True if rendered on the public shared report page */
+  isPublicPage?: boolean;
+  /** The AI summary block to inject into the layout (public page only) */
+  aiSummaryNode?: React.ReactNode;
 }
 
 /**
@@ -21,7 +25,7 @@ interface ResultsProps {
  * 3. GRANULAR DATA (Breakdown): Detailed tool-by-tool analysis with badges and fit reasoning.
  * 4. PERSISTENT ENGAGEMENT: Bottom lead capture for long-term user retention.
  */
-const Results: React.FC<ResultsProps> = ({ results, isLoading = false }) => {
+const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicPage = false, aiSummaryNode }) => {
   
   /**
    * --- LOADING STATE (SKELETONS) ---
@@ -202,9 +206,12 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false }) => {
         )}
       </header>
 
+      {/* AI SUMMARY INJECTION */}
+      {isPublicPage && aiSummaryNode}
+
       {/* STRATEGIC SECTIONS */}
-      {renderCredexCTA()}
-      {renderOptimalStackMessage()}
+      {!isPublicPage && renderCredexCTA()}
+      {!isPublicPage && renderOptimalStackMessage()}
 
       {/* TOOL BREAKDOWN SECTION - Detailed Article List */}
       <section className="space-y-8" aria-labelledby="breakdown-title">
@@ -322,7 +329,7 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false }) => {
       </section>
 
       {/* FINAL ENGAGEMENT SECTION */}
-      {!isOptimized && (
+      {!isPublicPage && !isOptimized && (
         <section 
           className="mt-16 p-12 bg-zinc-900 dark:bg-black rounded-[3rem] text-center space-y-8 shadow-2xl relative overflow-hidden border border-white/5"
           aria-labelledby="footer-cta-title"
