@@ -103,7 +103,6 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
   const status = externalStatus || (totalMonthlySavings > 1000 ? "Critical" : totalMonthlySavings > 100 ? "Needs Improvement" : "Optimized");
   const isOptimized = status === "Optimized";
   const isCritical = status === "Critical";
-  const isNeedsImprovement = status === "Needs Improvement";
 
   /**
    * --- CTA DECISION LOGIC ---
@@ -243,7 +242,7 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {results.map((result, idx) => {
+          {results.map((result) => {
             const hasHighSavings = result.savings.monthly > 100;
             const isToolOptimized = result.savings.monthly === 0;
 

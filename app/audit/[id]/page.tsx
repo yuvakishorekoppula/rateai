@@ -4,7 +4,7 @@ import Results from "@/components/Results";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { generateAISummary } from "@/lib/aiSummary";
-import { AuditResult } from "@/lib/auditEngine";
+import { AuditResult, AlternativeRecommendation } from "@/lib/auditEngine";
 import { Metadata } from "next";
 import CopyLinkButton from "@/components/CopyLinkButton";
 
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description,
       },
     };
-  } catch (error) {
+  } catch {
     return {
       title: "Error Loading Audit - RateAI",
     };
@@ -96,7 +96,7 @@ export default async function PublicAuditPage({ params }: PageProps) {
   // 1. Manually extract ONLY the necessary fields.
   // 2. Coerce types (String/Number) to guarantee no hidden object chains are leaked.
   // 3. This sanitized object is completely safe to pass to Third-Party AI APIs and public client browsers.
-  const sanitizedResults: AuditResult[] = audit.results.map((r: any) => ({
+  const sanitizedResults: AuditResult[] = audit.results.map((r: AuditResult) => ({
     uuid: String(r.uuid || crypto.randomUUID()),
     currentTool: String(r.currentTool || "Unknown Tool"),
     currentPlan: String(r.currentPlan || "Unknown Plan"),
@@ -112,7 +112,7 @@ export default async function PublicAuditPage({ params }: PageProps) {
       yearlySavings: Number(r.cheaperSameVendor.yearlySavings || 0),
       reason: String(r.cheaperSameVendor.reason || ""),
     } : undefined,
-    alternatives: Array.isArray(r.alternatives) ? r.alternatives.map((alt: any) => ({
+    alternatives: Array.isArray(r.alternatives) ? r.alternatives.map((alt: AlternativeRecommendation) => ({
       tool: String(alt.tool || ""),
       plan: String(alt.plan || ""),
       estimatedSavings: Number(alt.estimatedSavings || 0),

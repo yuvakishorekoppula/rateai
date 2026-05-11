@@ -40,12 +40,12 @@ export default function TermsPage() {
           </p>
           <h2 className="text-xl font-black text-zinc-900 dark:text-white mt-8 mb-4">1. Information Accuracy</h2>
           <p>
-            While we strive for extreme accuracy, software pricing changes rapidly. RateAI's results 
+            While we strive for extreme accuracy, software pricing changes rapidly. RateAI&apos;s results 
             should be used as directional guidance for procurement conversations, not guaranteed quotes.
           </p>
           <h2 className="text-xl font-black text-zinc-900 dark:text-white mt-8 mb-4">2. Liability</h2>
           <p>
-            RateAI is provided "as is". We are not responsible for any financial losses or contract 
+            RateAI is provided &quot;as is&quot;. We are not responsible for any financial losses or contract 
             disputes arising from your use of our audit recommendations.
           </p>
         </div>

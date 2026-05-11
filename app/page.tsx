@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AuditInputForm from "@/components/forms/AuditInputForm";
+import { AuditFormValues } from "@/lib/auditSchema";
 import Results from "@/components/Results";
 import { generateAuditReport, AuditResult } from "@/lib/auditEngine";
 import { savePublicAudit } from "@/lib/publicAudit";
@@ -23,7 +24,7 @@ export default function Home() {
   const [aiSummary, setAiSummary] = useState<{ summary: string, status: "Optimized" | "Needs Improvement" | "Critical" } | null>(null);
 
   // Handles the transition from form submission to results display
-  const handleAuditSubmit = async (data: any) => {
+  const handleAuditSubmit = async (data: AuditFormValues) => {
     setIsCalculating(true);
     
     // Simulate engine latency for a premium 'analyzing' feel
@@ -107,7 +108,7 @@ export default function Home() {
               <span className="text-zinc-400">Save Thousands.</span>
             </h1>
             <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto font-medium leading-relaxed">
-              The world's first AI-powered pricing auditor. We analyze your tools, seats, and usage to find hidden optimizations in seconds.
+              The world&apos;s first AI-powered pricing auditor. We analyze your tools, seats, and usage to find hidden optimizations in seconds.
             </p>
           </section>
 

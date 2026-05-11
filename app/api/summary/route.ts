@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     // Return the summary along with metadata for frontend analytics/logging
     return NextResponse.json(summaryData);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     /**
      * --- GLOBAL ERROR HANDLING ---
      * Ensures the API never returns a non-JSON error.
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { 
         error: "Failed to process AI summary request.",
-        details: error.message,
+        details: error instanceof Error ? error.message : String(error),
         timestamp: new Date().toISOString()
       },
       { status: 500 }

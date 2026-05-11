@@ -81,6 +81,7 @@ export async function generateAISummary(data: AISummaryRequest): Promise<AISumma
   if (!data.results || data.results.length === 0) {
     return { 
       summary: "No audit data available for analysis.", 
+      status: "Optimized",
       provider: "fallback",
       timestamp 
     };

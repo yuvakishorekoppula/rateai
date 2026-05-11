@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
      * 4. DATABASE PERSISTENCE (Supabase Upsert Flow)
      * Deduplicates leads by email to maintain a clean CRM.
      */
-    const { data: leadData, error: dbError } = await supabase
+    const { error: dbError } = await supabase
       .from("leads")
       .upsert(
         [
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
           results
         });
         aiSummary = aiResponse.summary;
-      } catch (aiError) {
+      } catch {
         console.error("[RESILIENCE] AI Engine failure logged.");
       }
     }
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
           </div>
         `,
       });
-    } catch (emailError) {
+    } catch {
       console.error("[RESILIENCE] Email delivery failure logged.");
     }
 
@@ -168,7 +168,7 @@ export async function POST(req: NextRequest) {
      */
     return NextResponse.json({ success: true });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[CRITICAL] Global API Failure:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },

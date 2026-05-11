@@ -32,13 +32,13 @@ export async function GET() {
       rowCount: data?.length || 0 
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Critical Test Error:", error);
     return NextResponse.json(
       { 
         status: "Error", 
         message: "An unexpected error occurred during the test.",
-        details: error.message 
+        details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
     );

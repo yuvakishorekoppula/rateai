@@ -126,7 +126,7 @@ export const calculateValueScore = (plan: PricingPlan, coverageScore: number): n
 /**
  * Determines how well a plan fits the user's needs.
  */
-export const getPlanFit = (input: AuditInput, plan: PricingPlan, platform: Platform): PlanFitResult => {
+export const getPlanFit = (input: AuditInput, plan: PricingPlan): PlanFitResult => {
   const reasoning: string[] = [];
   let score = 100;
   
@@ -258,7 +258,7 @@ export const generateAuditReport = (input: AuditInput): AuditResult | string => 
   const plan = getPlan(platform, input.selectedPlan);
   if (!plan) return "Plan not found.";
   
-  const fitResult = getPlanFit(input, plan, platform);
+  const fitResult = getPlanFit(input, plan);
   const cheaperSameVendor = findCheaperSameVendorPlan(input, platform, plan);
   const alternatives = findAlternativeTools(input, platform, plan);
   
@@ -280,7 +280,6 @@ export const generateAuditReport = (input: AuditInput): AuditResult | string => 
     confidence = 85;
   }
   
-  const currentTotal = normalizePricing(plan.monthlyPrice) * input.teamSize;
   const savings = calculateSavings(normalizePricing(plan.monthlyPrice), recommendedMonthlyPrice, input.teamSize);
   
   return {

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { AuditResult } from "@/lib/auditEngine";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -27,7 +28,7 @@ interface LeadCaptureFormProps {
   /** Full context from the audit results to attach to the lead */
   auditContext?: {
     totalAnnualSavings: number;
-    results: any[];
+    results: AuditResult[];
   };
 }
 
@@ -74,8 +75,8 @@ export default function LeadCaptureForm({ savings, onSuccess, auditContext }: Le
       setIsSuccess(true);
       reset();
       if (onSuccess) onSuccess();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }

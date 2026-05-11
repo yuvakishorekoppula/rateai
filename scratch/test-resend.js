@@ -1,4 +1,4 @@
-const { Resend } = require('resend');
+import { Resend } from 'resend';
 
 const resend = new Resend('re_g7ArtAfK_EzjTpo93HC5En6ozH9YDcv2Q');
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pricingData } from "@/lib/pricingData";
 import { auditFormSchema, AuditFormValues } from "@/lib/auditSchema";
@@ -54,7 +54,6 @@ export default function AuditInputForm({ onSubmit: externalOnSubmit }: AuditInpu
     control,
     handleSubmit,
     watch,
-    setValue,
     reset,
     formState: { errors },
   } = useForm<AuditFormValues>({
@@ -81,7 +80,6 @@ export default function AuditInputForm({ onSubmit: externalOnSubmit }: AuditInpu
   });
 
   const watchedTools = watch("tools");
-  const allValues = watch();
 
   /**
    * --- PERSISTENCE LOGIC ---

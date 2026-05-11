@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = 'https://oewfpwogtmxyaifjoiij.supabase.co';
 const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ld2Zwd29ndG14eWFpZmpvaWlqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODExODk3OCwiZXhwIjoyMDkzNjk0OTc4fQ.ZnQrlPHdUtkPIsp0KsF2X8koBAsBEEjS1QJG4DwSQDA';
@@ -9,7 +9,7 @@ async function testConnection() {
   console.log("Attempting to connect to Supabase...");
   
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('leads')
       .select('*')
       .limit(1);

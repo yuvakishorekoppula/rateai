@@ -1,13 +1,10 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   generateAuditReport,
   getPlanFit,
   findCheaperSameVendorPlan,
   findAlternativeTools,
   calculateSavings,
-  calculateValueScore,
-  compareFeatureCoverage,
-  normalizePricing,
   AuditInput,
   AuditResult,
 } from "../lib/auditEngine";
@@ -24,15 +21,6 @@ const soloDevInput: AuditInput = {
   teamSize: 1,
   requiredFeatures: ["GPT-4o", "DALL-E"],
   usageLevel: "medium",
-};
-
-const startupTeamInput: AuditInput = {
-  selectedTool: "Cursor",
-  selectedPlan: "Pro",
-  budget: 200,
-  teamSize: 10,
-  requiredFeatures: ["SAML", "billing"],
-  usageLevel: "high",
 };
 
 const enterpriseInput: AuditInput = {
@@ -53,7 +41,7 @@ describe("Audit Engine - Core Logic", () => {
     it("should return a high score for a perfectly matched plan", () => {
       const platform = pricingData.find((p) => p.id === "chatgpt")!;
       const plan = platform.pricingPlans.find((p) => p.planName === "Plus")!;
-      const result = getPlanFit(soloDevInput, plan, platform);
+      const result = getPlanFit(soloDevInput, plan);
       
       expect(result.score).toBeGreaterThan(80);
       expect(result.status).toBe("appropriate");
@@ -63,7 +51,7 @@ describe("Audit Engine - Core Logic", () => {
       const platform = pricingData.find((p) => p.id === "chatgpt")!;
       const plan = platform.pricingPlans.find((p) => p.planName === "Free")!;
       const input = { ...soloDevInput, requiredFeatures: ["DALL-E", "Voice Mode"] };
-      const result = getPlanFit(input, plan, platform);
+      const result = getPlanFit(input, plan);
       
       expect(result.score).toBeLessThan(60);
       expect(result.status).toBe("underpowered");
@@ -73,7 +61,7 @@ describe("Audit Engine - Core Logic", () => {
       const platform = pricingData.find((p) => p.id === "cursor")!;
       const plan = platform.pricingPlans.find((p) => p.planName === "Ultra")!;
       const input = { ...soloDevInput, budget: 10, requiredFeatures: ["priority"] }; 
-      const result = getPlanFit(input, plan, platform);
+      const result = getPlanFit(input, plan);
       
       expect(result.status).toBe("overpaying");
     });
@@ -190,7 +178,7 @@ describe("Audit Engine - Core Logic", () => {
     it("should handle negative budget gracefully", () => {
       const platform = pricingData.find((p) => p.id === "chatgpt")!;
       const plan = platform.pricingPlans.find((p) => p.planName === "Plus")!;
-      const result = getPlanFit({ ...soloDevInput, budget: -10 }, plan, platform);
+      const result = getPlanFit({ ...soloDevInput, budget: -10 }, plan);
       
       expect(result.score).toBeLessThanOrEqual(50);
       expect(result.reasoning.some(r => r.includes("budget"))).toBe(true);
@@ -199,7 +187,7 @@ describe("Audit Engine - Core Logic", () => {
     it("should handle enterprise users correctly", () => {
       const platform = pricingData.find((p) => p.id === "claude")!;
       const plan = platform.pricingPlans.find((p) => p.planName === "Enterprise")!;
-      const result = getPlanFit(enterpriseInput, plan, platform);
+      const result = getPlanFit(enterpriseInput, plan);
       
       expect(result.score).toBeGreaterThan(70);
       expect(result.reasoning).toContain("All required features are covered by this plan.");

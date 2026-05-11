@@ -10,8 +10,8 @@
  *  4. Email flow → Resend API
  */
 
-const { createClient } = require('@supabase/supabase-js');
-const { Resend } = require('resend');
+import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 
 // ── CONFIG ────────────────────────────────────────────────
 const SUPABASE_URL = 'https://oewfpwogtmxyaifjoiij.supabase.co';
