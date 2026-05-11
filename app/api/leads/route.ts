@@ -16,6 +16,7 @@ const leadCaptureSchema = z.object({
   totalMonthlySavings: z.number().nonnegative(),
   totalAnnualSavings: z.number().nonnegative(),
   results: z.array(z.any()).optional(),
+  shareableId: z.string().uuid().optional(),
   website_url: z.string().optional(), // Honeypot trap
 });
 
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
       results, 
       totalMonthlySavings, 
       totalAnnualSavings, 
+      shareableId,
       website_url 
     } = validation.data;
 
@@ -147,9 +149,12 @@ export async function POST(req: NextRequest) {
               </div>
             </div>
 
-            <div style="margin-top: 32px; text-align: center;">
-              <a href="https://cursor.com" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 28px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 14px;">
-                Schedule Implementation Roadmap →
+            <div style="margin-top: 32px; text-align: center; display: flex; flex-direction: column; gap: 16px; align-items: center;">
+              <a href="https://rateai.vercel.app/audit/${shareableId || ''}" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 28px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 14px; width: 220px;">
+                View Full Detailed Report →
+              </a>
+              <a href="https://cursor.com" style="display: inline-block; background-color: #f3f4f6; color: #374151; padding: 14px 28px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 14px; width: 220px;">
+                Schedule Consult →
               </a>
             </div>
 

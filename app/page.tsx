@@ -158,6 +158,7 @@ export default function Home() {
               results={auditResults} 
               isLoading={isCalculating} 
               status={aiSummary?.status}
+              shareableId={shareableId || undefined}
               aiSummaryNode={aiSummary ? (
                 <div className="max-w-4xl mx-auto px-4 mb-8">
                   <div className="bg-blue-50 dark:bg-zinc-900 rounded-3xl p-6 border border-blue-100 dark:border-zinc-800">

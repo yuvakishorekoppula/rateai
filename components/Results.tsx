@@ -15,6 +15,8 @@ interface ResultsProps {
   aiSummaryNode?: React.ReactNode;
   /** The high-level status of the audit (Optimized, Needs Improvement, Critical) */
   status?: "Optimized" | "Needs Improvement" | "Critical";
+  /** The unique ID for the public shareable report */
+  shareableId?: string;
 }
 
 /**
@@ -27,7 +29,7 @@ interface ResultsProps {
  * 3. GRANULAR DATA (Breakdown): Detailed tool-by-tool analysis with badges and fit reasoning.
  * 4. PERSISTENT ENGAGEMENT: Bottom lead capture for long-term user retention.
  */
-const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicPage = false, aiSummaryNode, status: externalStatus }) => {
+const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicPage = false, aiSummaryNode, status: externalStatus, shareableId }) => {
   const [selectedResult, setSelectedResult] = useState<AuditResult | null>(null);
   
   if (typeof window !== "undefined") {
@@ -169,7 +171,8 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
             savings={totalMonthlySavings}
             auditContext={{ 
               totalAnnualSavings, 
-              results 
+              results,
+              shareableId
             }} 
           />
         </div>
@@ -355,6 +358,24 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
           })}
         </div>
       </section>
+
+      {/* PERSISTENT LEAD CAPTURE - Bottom of results to ensure conversion */}
+      {!isPublicPage && !isOptimized && (
+        <section className="max-w-2xl mx-auto pt-16 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">Save This Report</h3>
+            <p className="text-zinc-500 dark:text-zinc-400 font-medium">Enter your email to get a permanent link and full implementation breakdown.</p>
+          </div>
+          <LeadCaptureForm 
+            savings={totalMonthlySavings}
+            auditContext={{ 
+              totalAnnualSavings, 
+              results,
+              shareableId
+            }} 
+          />
+        </section>
+      )}
 
       {/* DETAILS MODAL */}
       {selectedResult && (

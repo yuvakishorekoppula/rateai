@@ -29,6 +29,7 @@ interface LeadCaptureFormProps {
   auditContext?: {
     totalAnnualSavings: number;
     results: AuditResult[];
+    shareableId?: string;
   };
 }
 
