@@ -96,4 +96,28 @@ The project is complete and production-ready. It meets all assignment requiremen
 **Overall assessment:**
 The project is production ready and been deployed on Vercel. Core architecture, integrations, and UI are working well.
 
+## Day 6 — 2026-06-10
 
+**Hours worked:** 5
+
+**What I did:**
+
+* Improved and Polished UI 
+
+**What I learned:**
+
+* Environment variables behave differently locally vs production deployments
+* Vercel requires manual configuration of server-side secrets and API keys
+* Small dependency mismatches can break full application builds in Next.js
+* Proper project structure and workspace cleanup are critical for smooth deployments
+* API route debugging in Next.js App Router requires careful handling of server-only code
+
+**Blockers / what I'm stuck on:**
+
+*  I am currently working on my interview for three real conversations
+
+**Plan for tomorrow:**
+* Conduct end-to-end testing for the full audit workflow
+
+**Overall assessment:**
+The project is production ready and been deployed on Vercel. Core architecture, integrations, and UI are working well.

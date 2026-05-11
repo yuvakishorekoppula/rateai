@@ -2,7 +2,7 @@
 
 # System Architecture
 
-## High-Level Architecture Diagram (Mermaid)
+### High-Level Architecture Diagram (Mermaid)
 
 ```mermaid
 flowchart TD
@@ -28,8 +28,9 @@ flowchart TD
     J --> L
 
     L --> M[User Views Insights & Recommendations]
+```
 
-    # Data Flow
+# Data Flow
 
 ```mermaid
 sequenceDiagram
@@ -57,8 +58,9 @@ sequenceDiagram
     A-->>F: Return Audit Response
 
     F-->>U: Display Dashboard & Insights
+```
 
-    # Why I Chose This Stack
+# Why I Chose This Stack
 
 ## Frontend — Next.js
 
