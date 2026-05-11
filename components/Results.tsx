@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { AuditResult } from "@/lib/auditEngine";
 import LeadCaptureForm from "./LeadCaptureForm";
 
@@ -13,6 +13,8 @@ interface ResultsProps {
   isPublicPage?: boolean;
   /** The AI summary block to inject into the layout (public page only) */
   aiSummaryNode?: React.ReactNode;
+  /** The high-level status of the audit (Optimized, Needs Improvement, Critical) */
+  status?: "Optimized" | "Needs Improvement" | "Critical";
 }
 
 /**
@@ -25,7 +27,17 @@ interface ResultsProps {
  * 3. GRANULAR DATA (Breakdown): Detailed tool-by-tool analysis with badges and fit reasoning.
  * 4. PERSISTENT ENGAGEMENT: Bottom lead capture for long-term user retention.
  */
-const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicPage = false, aiSummaryNode }) => {
+const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicPage = false, aiSummaryNode, status: externalStatus }) => {
+  const [selectedResult, setSelectedResult] = useState<AuditResult | null>(null);
+  
+  if (typeof window !== "undefined") {
+    console.log("[DEBUG] Results Component Rendering:", { 
+      resultsCount: results?.length, 
+      isPublicPage, 
+      status: externalStatus,
+      rawResults: results 
+    });
+  }
   
   /**
    * --- LOADING STATE (SKELETONS) ---
@@ -85,10 +97,13 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
    * Aggregates individual tool results into a total stack perspective.
    */
   const totalMonthlySavings = results.reduce((acc, curr) => acc + curr.savings.monthly, 0);
-  const totalAnnualSavings = totalMonthlySavings * 12;
+  const totalAnnualSavings = results.reduce((acc, curr) => acc + curr.savings.yearly, 0);
   
-  // OPTIMAL CASE DETECTION: If savings are < $100/mo, we consider the stack "Optimized".
-  const isOptimized = totalMonthlySavings < 100;
+  // STATUS LOGIC: Fallback to calculation if no external status provided
+  const status = externalStatus || (totalMonthlySavings > 1000 ? "Critical" : totalMonthlySavings > 100 ? "Needs Improvement" : "Optimized");
+  const isOptimized = status === "Optimized";
+  const isCritical = status === "Critical";
+  const isNeedsImprovement = status === "Needs Improvement";
 
   /**
    * --- CTA DECISION LOGIC ---
@@ -175,26 +190,29 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
         
         {!isOptimized ? (
           <div className="space-y-4">
-            <h1 className="text-zinc-900 dark:text-zinc-100 text-3xl font-medium tracking-tight">You could save up to</h1>
+            <h1 className="text-zinc-900 dark:text-zinc-100 text-3xl font-medium tracking-tight">Status:</h1>
             <div className="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-16">
               <div className="flex flex-col group">
-                <span className="text-7xl md:text-9xl font-black text-blue-600 tracking-tighter transition-transform group-hover:scale-105 duration-500 cursor-default">
-                  ${totalMonthlySavings.toLocaleString()}
+                <span className={`text-7xl md:text-9xl font-black tracking-tighter transition-transform group-hover:scale-105 duration-500 cursor-default uppercase ${
+                  isCritical ? "text-red-600" : "text-yellow-500"
+                }`}>
+                  {status}
                 </span>
-                <div className="flex items-center justify-center gap-2 text-green-500 font-black text-sm uppercase tracking-tighter" aria-label="Positive reduction trend">
+                <div className={`flex items-center justify-center gap-2 font-black text-sm uppercase tracking-tighter ${
+                  isCritical ? "text-red-400" : "text-yellow-400"
+                }`} aria-label="Action required">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
-                  <span>Potential Reduction</span>
+                  <span>Action Recommended</span>
                 </div>
-                <span className="text-xs font-black text-zinc-400 uppercase tracking-widest mt-2">Per Month</span>
               </div>
               <div className="h-px md:h-24 w-24 md:w-px bg-zinc-200 dark:bg-zinc-800" aria-hidden="true" />
               <div className="flex flex-col">
                 <span className="text-5xl md:text-7xl font-black text-zinc-800 dark:text-zinc-200 tracking-tighter">
-                  ${totalAnnualSavings.toLocaleString()}
+                  ${totalMonthlySavings.toLocaleString()}
                 </span>
-                <span className="text-xs font-black text-zinc-400 uppercase tracking-widest mt-2">Per Year</span>
+                <span className="text-xs font-black text-zinc-400 uppercase tracking-widest mt-2">Potential Monthly Savings</span>
               </div>
             </div>
           </div>
@@ -231,7 +249,7 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
 
             return (
               <article
-                key={`${result.currentTool}-${idx}`}
+                key={result.uuid}
                 className="group p-10 bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-900/50 transition-all duration-500 ease-out flex flex-col justify-between"
               >
                 <div className="flex justify-between items-start mb-10">
@@ -306,7 +324,14 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
                   {result.fitResult.reasoning.length > 0 && (
                     <div className="p-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-3xl text-sm italic font-medium text-zinc-600 dark:text-zinc-400 leading-relaxed border-l-8 border-zinc-200 dark:border-zinc-700 shadow-sm">
                       <span className="not-italic font-black text-zinc-400 uppercase text-[10px] tracking-widest block mb-3">Audit Reasoning</span>
-                      "{result.fitResult.reasoning[0]}"
+                      <ul className="space-y-2 not-italic">
+                        {result.fitResult.reasoning.map((reason, rIdx) => (
+                          <li key={rIdx} className="flex gap-2">
+                            <span className="text-blue-500">•</span>
+                            {reason}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>
@@ -318,8 +343,12 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
                       {result.savings.monthly > 0 ? "Cost Efficiency" : "Strategic Alignment"}
                     </span>
                   </div>
-                  <button className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest hover:underline transition-all focus:ring-2 focus:ring-blue-500 outline-none rounded-lg p-1.5" aria-label={`View detailed report for ${result.currentTool}`}>
-                    View Detail →
+                  <button 
+                    onClick={() => setSelectedResult(result)}
+                    className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest hover:underline transition-all focus:ring-2 focus:ring-blue-500 outline-none rounded-lg p-1.5" 
+                    aria-label={`View detailed report for ${result.currentTool}`}
+                  >
+                    View Details →
                   </button>
                 </div>
               </article>
@@ -328,29 +357,99 @@ const Results: React.FC<ResultsProps> = ({ results, isLoading = false, isPublicP
         </div>
       </section>
 
-      {/* FINAL ENGAGEMENT SECTION */}
-      {!isPublicPage && !isOptimized && (
-        <section 
-          className="mt-16 p-12 bg-zinc-900 dark:bg-black rounded-[3rem] text-center space-y-8 shadow-2xl relative overflow-hidden border border-white/5"
-          aria-labelledby="footer-cta-title"
-        >
-          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl -mr-40 -mt-40 transition-transform group-hover:scale-110 duration-1000" aria-hidden="true" />
-          <div className="space-y-3 relative z-10">
-            <h3 id="footer-cta-title" className="text-3xl font-black text-white tracking-tight">Stay Optimized.</h3>
-            <p className="text-zinc-400 text-lg max-w-md mx-auto leading-relaxed font-medium">
-              The AI landscape changes weekly. We'll monitor your stack and alert you when better pricing or models become available.
-            </p>
+      {/* DETAILS MODAL */}
+      {selectedResult && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+          <div 
+            className="bg-white dark:bg-zinc-900 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] shadow-2xl border border-zinc-200 dark:border-zinc-800 p-8 md:p-12 relative"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
+            <button 
+              onClick={() => setSelectedResult(null)}
+              className="absolute top-6 right-6 p-3 bg-zinc-100 dark:bg-zinc-800 rounded-full hover:scale-110 transition-all active:scale-95 text-zinc-500"
+              aria-label="Close details modal"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <header className="mb-10 space-y-2">
+              <p className="text-blue-600 font-black uppercase text-[10px] tracking-widest">Deep Audit Breakdown</p>
+              <h2 id="modal-title" className="text-4xl font-black text-zinc-900 dark:text-white tracking-tight">
+                {selectedResult.currentTool}
+              </h2>
+              <p className="text-zinc-500 font-medium">Currently on <span className="text-zinc-800 dark:text-zinc-200 font-bold">{selectedResult.currentPlan}</span> plan.</p>
+            </header>
+
+            <div className="space-y-10">
+              {/* CHEAPER SAME VENDOR RECOMMENDATION */}
+              {selectedResult.cheaperSameVendor && (
+                <section className="p-8 bg-blue-50 dark:bg-blue-900/10 rounded-3xl border border-blue-100 dark:border-blue-800/30 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                    <h3 className="font-black uppercase text-xs tracking-widest text-blue-700 dark:text-blue-400">Vendor Optimization</h3>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-zinc-900 dark:text-white font-black text-xl">
+                      Switch to <span className="text-blue-600 underline decoration-2 underline-offset-4">{selectedResult.cheaperSameVendor.recommendedPlan}</span>
+                    </p>
+                    <p className="text-zinc-500 text-sm font-medium">{selectedResult.cheaperSameVendor.reason}</p>
+                  </div>
+                  <div className="pt-4 border-t border-blue-100 dark:border-blue-800/50 flex gap-8">
+                    <div>
+                      <p className="text-[10px] font-black text-blue-600/50 uppercase tracking-widest mb-1">Monthly Savings</p>
+                      <p className="text-2xl font-black text-blue-700 dark:text-blue-300">${selectedResult.cheaperSameVendor.monthlySavings.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-blue-600/50 uppercase tracking-widest mb-1">Annual Savings</p>
+                      <p className="text-2xl font-black text-blue-700 dark:text-blue-300">${selectedResult.cheaperSameVendor.yearlySavings.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {/* ALTERNATIVE PLATFORMS */}
+              {selectedResult.alternatives.length > 0 && (
+                <section className="space-y-6">
+                  <h3 className="font-black uppercase text-xs tracking-widest text-zinc-400">Alternative Options</h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {selectedResult.alternatives.map((alt, aIdx) => (
+                      <div key={aIdx} className="p-6 bg-zinc-50 dark:bg-zinc-800 rounded-3xl border border-zinc-200 dark:border-zinc-700 group hover:border-blue-500 transition-colors">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <p className="font-black text-lg text-zinc-900 dark:text-white">{alt.tool}</p>
+                            <p className="text-xs text-zinc-500 font-bold uppercase tracking-wider">{alt.plan}</p>
+                          </div>
+                          <div className="px-3 py-1 bg-white dark:bg-zinc-700 rounded-lg shadow-sm border border-zinc-100 dark:border-zinc-600 text-green-600 text-xs font-black">
+                            Value: {alt.valueScore}/100
+                          </div>
+                        </div>
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 font-medium leading-relaxed">{alt.reason}</p>
+                        <div className="flex items-center gap-2 text-zinc-900 dark:text-white font-black">
+                          <span className="text-[10px] text-zinc-400 uppercase tracking-widest">Est. Savings:</span>
+                          <span className="text-xl">${alt.estimatedSavings.toLocaleString()}</span>
+                          <span className="text-[10px] text-zinc-400 uppercase tracking-widest">/mo</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800">
+                <button 
+                  onClick={() => setSelectedResult(null)}
+                  className="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-black rounded-2xl hover:scale-[1.02] transition-all active:scale-95 shadow-xl"
+                >
+                  Close Breakdown
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="max-w-2xl mx-auto relative z-10">
-            <LeadCaptureForm 
-              savings={totalMonthlySavings}
-              auditContext={{ 
-                totalAnnualSavings, 
-                results 
-              }} 
-            />
-          </div>
-        </section>
+        </div>
       )}
     </main>
   );

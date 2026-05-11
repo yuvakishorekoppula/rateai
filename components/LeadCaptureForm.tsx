@@ -10,6 +10,7 @@ import * as z from "zod";
  * Enforces data hygiene and improves conversion through clear validation feedback.
  */
 const leadSchema = z.object({
+  name: z.string().min(1, "Full name is required"),
   email: z.string().email("Please enter a valid work email"),
   company: z.string().min(1, "Company name is required"),
   role: z.string().min(1, "Job title is required"),
@@ -115,6 +116,18 @@ export default function LeadCaptureForm({ savings, onSuccess, auditContext }: Le
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Honeypot trap - invisible to users */}
           <input type="text" {...register("website_url")} style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
+
+          {/* Name Field */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest pl-1">Full Name</label>
+            <input
+              {...register("name")}
+              type="text"
+              placeholder="Jane Doe"
+              className={`w-full px-5 py-4 rounded-2xl bg-zinc-800 border ${errors.name ? "border-red-500" : "border-zinc-700"} text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-zinc-600 font-medium`}
+            />
+            {errors.name && <p className="text-red-500 text-[10px] font-black uppercase pl-1">{errors.name.message}</p>}
+          </div>
 
           {/* Email Field */}
           <div className="space-y-1.5">

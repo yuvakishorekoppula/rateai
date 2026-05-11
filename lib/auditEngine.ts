@@ -43,6 +43,7 @@ export interface CheaperSameVendor {
 }
 
 export interface AuditResult {
+  uuid: string;
   currentTool: string;
   currentPlan: string;
   fitScore: number;
@@ -283,6 +284,7 @@ export const generateAuditReport = (input: AuditInput): AuditResult | string => 
   const savings = calculateSavings(normalizePricing(plan.monthlyPrice), recommendedMonthlyPrice, input.teamSize);
   
   return {
+    uuid: crypto.randomUUID(),
     currentTool: platform.name,
     currentPlan: plan.planName,
     fitScore: fitResult.score,

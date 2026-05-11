@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AuditInputForm from "@/components/forms/AuditInputForm";
 import Results from "@/components/Results";
 import { generateAuditReport, AuditResult } from "@/lib/auditEngine";
 import { savePublicAudit } from "@/lib/publicAudit";
+import { generateAISummary } from "@/lib/aiSummary";
 import Link from "next/link";
 
 /**
@@ -19,6 +20,7 @@ export default function Home() {
   const [auditResults, setAuditResults] = useState<AuditResult[] | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [shareableId, setShareableId] = useState<string | null>(null);
+  const [aiSummary, setAiSummary] = useState<{ summary: string, status: "Optimized" | "Needs Improvement" | "Critical" } | null>(null);
 
   // Handles the transition from form submission to results display
   const handleAuditSubmit = async (data: any) => {
@@ -43,12 +45,22 @@ export default function Home() {
          }
       }
       setAuditResults(results);
+      
+      // Generate AI Summary and Status
+      const totalMonthlySavings = results.reduce((acc, r) => acc + r.savings.monthly, 0);
+      const totalAnnualSavings = results.reduce((acc, r) => acc + r.savings.yearly, 0);
+      
+      const aiRes = await generateAISummary({
+        totalMonthlySavings,
+        totalAnnualSavings,
+        results
+      });
+      setAiSummary({ summary: aiRes.summary, status: aiRes.status });
 
       // Persist to Supabase and generate a shareable public URL
-      const totalMonthlySavings = results.reduce((acc, r) => acc + r.savings.monthly, 0);
       const id = await savePublicAudit({
         totalMonthlySavings,
-        totalAnnualSavings: totalMonthlySavings * 12,
+        totalAnnualSavings,
         results,
       });
       if (id) setShareableId(id);
@@ -141,7 +153,20 @@ export default function Home() {
                 </div>
               </div>
             )}
-            <Results results={auditResults} isLoading={isCalculating} />
+            <Results 
+              results={auditResults} 
+              isLoading={isCalculating} 
+              status={aiSummary?.status}
+              aiSummaryNode={aiSummary ? (
+                <div className="max-w-4xl mx-auto px-4 mb-8">
+                  <div className="bg-blue-50 dark:bg-zinc-900 rounded-3xl p-6 border border-blue-100 dark:border-zinc-800">
+                    <p className="text-xs font-black uppercase tracking-widest text-blue-600 mb-2">AI Summary</p>
+                    <p className="text-zinc-700 dark:text-zinc-300 font-medium leading-relaxed">{aiSummary.summary}</p>
+                  </div>
+                </div>
+              ) : null}
+              isPublicPage={!!aiSummary}
+            />
             
             {/* RESET BUTTON */}
             <div className="max-w-6xl mx-auto px-4 mt-8">

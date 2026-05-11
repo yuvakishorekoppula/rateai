@@ -8,8 +8,11 @@ import { AuditResult } from "@/lib/auditEngine";
 import { Metadata } from "next";
 import CopyLinkButton from "@/components/CopyLinkButton";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -24,7 +27,8 @@ interface PageProps {
  */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
-    const audit = await getPublicAudit(params.id);
+    const { id } = await params;
+    const audit = await getPublicAudit(id);
 
     if (!audit) {
       return {
@@ -68,8 +72,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  * 5. Rendering: Passes strictly clean data to the modular Results components and Share CTAs.
  */
 export default async function PublicAuditPage({ params }: PageProps) {
+  const { id } = await params;
   // Fetch the shared audit data from Supabase using the server-side function
-  const audit = await getPublicAudit(params.id);
+  const audit = await getPublicAudit(id);
+
+  console.log(`[DEBUG] Fetched Audit Record [${id}]:`, JSON.stringify(audit, null, 2));
 
   if (!audit) {
     notFound();
@@ -90,6 +97,7 @@ export default async function PublicAuditPage({ params }: PageProps) {
   // 2. Coerce types (String/Number) to guarantee no hidden object chains are leaked.
   // 3. This sanitized object is completely safe to pass to Third-Party AI APIs and public client browsers.
   const sanitizedResults: AuditResult[] = audit.results.map((r: any) => ({
+    uuid: String(r.uuid || crypto.randomUUID()),
     currentTool: String(r.currentTool || "Unknown Tool"),
     currentPlan: String(r.currentPlan || "Unknown Plan"),
     fitScore: Number(r.fitScore || 0),
@@ -210,6 +218,7 @@ export default async function PublicAuditPage({ params }: PageProps) {
           isLoading={false} 
           isPublicPage={true}
           aiSummaryNode={aiSummaryNode}
+          status={aiSummaryData.status}
         />
 
         {/* SHARE CTA */}
@@ -225,7 +234,7 @@ export default async function PublicAuditPage({ params }: PageProps) {
             {/* SOCIAL ACTIONS (Responsive) */}
             <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 w-full md:w-auto">
               <a 
-                href={`https://twitter.com/intent/tweet?url=https://rateai.vercel.app/audit/${params.id}&text=Check%20out%20my%20custom%20AI%20Pricing%20Audit%21%20I%20could%20save%20%24${audit.total_monthly_savings}%2Fmonth.`} 
+                href={`https://twitter.com/intent/tweet?url=https://rateai.vercel.app/audit/${id}&text=Check%20out%20my%20custom%20AI%20Pricing%20Audit%21%20I%20could%20save%20%24${audit.total_monthly_savings}%2Fmonth.`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-10 h-10 flex items-center justify-center rounded-full bg-black dark:bg-white text-white dark:text-black hover:scale-110 transition-transform shadow-md focus:ring-4 focus:ring-zinc-500/30 outline-none"
@@ -234,7 +243,7 @@ export default async function PublicAuditPage({ params }: PageProps) {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.92H5.078z"/></svg>
               </a>
               <a 
-                href={`https://www.linkedin.com/sharing/share-offsite/?url=https://rateai.vercel.app/audit/${params.id}`} 
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=https://rateai.vercel.app/audit/${id}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0077b5] text-white hover:scale-110 transition-transform shadow-md focus:ring-4 focus:ring-blue-500/30 outline-none"
@@ -243,7 +252,7 @@ export default async function PublicAuditPage({ params }: PageProps) {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
               </a>
               <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-700 hidden md:block mx-2" />
-              <CopyLinkButton id={params.id} />
+              <CopyLinkButton id={id} />
             </div>
           </div>
         </section>

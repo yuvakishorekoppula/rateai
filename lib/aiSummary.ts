@@ -16,6 +16,7 @@ export interface AISummaryRequest {
 /** The standard response returned by the summary engine */
 export interface AISummaryResponse {
   summary: string;
+  status: "Optimized" | "Needs Improvement" | "Critical";
   provider?: "openai" | "anthropic" | "fallback";
   timestamp: string;
 }
@@ -90,20 +91,32 @@ export async function generateAISummary(data: AISummaryRequest): Promise<AISumma
 
   try {
     // PROVIDER PRIORITIZATION: Easily extensible for future providers (e.g., Google Gemini)
+    // DETERMINE STATUS
+    let status: AISummaryResponse["status"] = "Optimized";
+    if (data.totalMonthlySavings > 1000) status = "Critical";
+    else if (data.totalMonthlySavings > 100) status = "Needs Improvement";
+
     if (ANTHROPIC_KEY) {
       const summary = await callAnthropic(ANTHROPIC_KEY, prompt, timeoutMs);
-      return { summary, provider: "anthropic", timestamp };
+      return { summary, status, provider: "anthropic", timestamp };
     } else if (OPENAI_KEY) {
       const summary = await callOpenAI(OPENAI_KEY, prompt, timeoutMs);
-      return { summary, provider: "openai", timestamp };
+      return { summary, status, provider: "openai", timestamp };
     }
 
     throw new Error("No AI providers configured");
   } catch (error) {
     // API FAILURE HANDLING: Logs error for analytics/debugging but returns friendly fallback
     console.error("AI Summary Engine Error:", error);
+    
+    // Fallback status logic
+    let status: AISummaryResponse["status"] = "Optimized";
+    if (data.totalMonthlySavings > 1000) status = "Critical";
+    else if (data.totalMonthlySavings > 100) status = "Needs Improvement";
+
     return { 
       summary: FALLBACK_MESSAGE, 
+      status,
       provider: "fallback", 
       timestamp 
     };
