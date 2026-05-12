@@ -1,4 +1,4 @@
-# RateAI
+
 
 # RateAI is an AI-powered pricing intelligence platform designed for startups, SaaS businesses, and ecommerce founders. The platform helps users analyze competitor pricing, generate AI-driven pricing insights, and capture qualified leads through an interactive dashboard and automated workflows. It was built to simplify pricing strategy decisions using real-time analytics and AI assistance.
 
@@ -10,9 +10,6 @@
 ### AI Analysis Results
 ![alt text](image-1.png)
 
-
-### AI Analysis Reprt via email 
-![alt text](image-2.png)
 
 ## Live Deployment
 https://rateai-yuvakishorekoppulas-projects.vercel.app?_vercel_share=cnCRq5PaO3liToXQkCgWYE4Wipcz5p6R
