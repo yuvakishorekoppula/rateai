@@ -116,8 +116,5 @@ The project is production ready and been deployed on Vercel. Core architecture, 
 
 *  I am currently working on my interview for three real conversations
 
-**Plan for tomorrow:**
-* Conduct end-to-end testing for the full audit workflow
-
 **Overall assessment:**
 The project is production ready and been deployed on Vercel. Core architecture, integrations, and UI are working well.
